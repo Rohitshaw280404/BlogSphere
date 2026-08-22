@@ -1,19 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import api from "../services/api";
-
-import Comment from "../components/Comment";
-import CommentForm from "../components/CommentForm";
-import LikeButton from "../components/LikeButton";
 
 const PostDetails = () => {
 
     const { id } = useParams();
 
     const [post, setPost] = useState(null);
-    const [comments, setComments] = useState([]);
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -26,106 +20,137 @@ const PostDetails = () => {
                 `/posts/${id}`
             );
 
+            console.log(
+                "Post response:",
+                response.data
+            );
+
             setPost(response.data.data);
 
         } catch (error) {
 
+            console.error(
+                "Error fetching post:",
+                error
+            );
+
             setError(
                 error.response?.data?.message ||
-                "Post not found"
+                "Failed to fetch post"
             );
 
-        }
-    };
+        } finally {
 
-
-    const fetchComments = async () => {
-
-        try {
-
-            const response = await api.get(
-                `/comments/post/${id}`
-            );
-
-            setComments(response.data.data);
-
-        } catch (error) {
-
-            console.error(error);
+            setLoading(false);
 
         }
     };
 
 
     useEffect(() => {
-
-        const loadData = async () => {
-
-            await Promise.all([
-                fetchPost(),
-                fetchComments()
-            ]);
-
-            setLoading(false);
-        };
-
-        loadData();
-
+        fetchPost();
     }, [id]);
 
 
     if (loading) {
-        return <p>Loading...</p>;
+        return (
+            <main>
+                <h1>Loading post...</h1>
+            </main>
+        );
     }
 
 
     if (error) {
-        return <p>{error}</p>;
+        return (
+            <main>
+                <h1>Error</h1>
+                <p>{error}</p>
+
+                <Link to="/">
+                    Back to Home
+                </Link>
+            </main>
+        );
+    }
+
+
+    if (!post) {
+        return (
+            <main>
+                <p>Post not found.</p>
+            </main>
+        );
     }
 
 
     return (
         <main>
 
-            <h1>{post.title}</h1>
+            <Link to="/">
+                ← Back to Home
+            </Link>
 
-            <p>
-                By {post.author?.fullName}
-            </p>
-
-            <p>
-                Category: {post.category}
-            </p>
 
             <article>
-                {post.content}
+
+                <h1>{post.title}</h1>
+
+
+                <p>
+                    By{" "}
+                    {post.author?.fullName ||
+                        "Unknown author"}
+                </p>
+
+
+                <p>
+                    Category: {post.category}
+                </p>
+
+
+                <p>
+                    Published:{" "}
+                    {new Date(
+                        post.createdAt
+                    ).toLocaleDateString()}
+                </p>
+
+
+                <hr />
+
+
+                <p>
+                    {post.content}
+                </p>
+
+
+                <hr />
+
+
+                <p>
+                    Likes: {post.likes?.length || 0}
+                </p>
+
+
+                {post.tags &&
+                    post.tags.length > 0 && (
+                        <div>
+
+                            <strong>Tags: </strong>
+
+                            {post.tags.map(
+                                (tag, index) => (
+                                    <span key={index}>
+                                        #{tag}{" "}
+                                    </span>
+                                )
+                            )}
+
+                        </div>
+                    )}
+
             </article>
-
-
-            <LikeButton
-                post={post}
-                setPost={setPost}
-            />
-
-
-            <hr />
-
-
-            <h2>Comments</h2>
-
-            <CommentForm
-                postId={id}
-                setComments={setComments}
-            />
-
-
-            {comments.map((comment) => (
-                <Comment
-                    key={comment._id}
-                    comment={comment}
-                    setComments={setComments}
-                />
-            ))}
 
         </main>
     );

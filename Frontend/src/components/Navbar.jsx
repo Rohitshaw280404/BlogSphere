@@ -1,9 +1,16 @@
-import { Link, useNavigate } from "react-router-dom";
+import {
+    Link,
+    useNavigate
+} from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
 
-    const { user, logout } = useAuth();
+    const {
+        user,
+        logout
+    } = useAuth();
 
     const navigate = useNavigate();
 
@@ -33,19 +40,13 @@ const Navbar = () => {
 
                 {user ? (
                     <>
-                        <Link to="/create-post">
-                            Create Post
-                        </Link>
-
-                        <Link to="/dashboard">
-                            Dashboard
-                        </Link>
-
                         <span>
-                            {user.fullName}
+                            Welcome, {user.fullName}
                         </span>
 
-                        <button onClick={handleLogout}>
+                        <button
+                            onClick={handleLogout}
+                        >
                             Logout
                         </button>
                     </>

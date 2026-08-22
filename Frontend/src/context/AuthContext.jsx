@@ -7,7 +7,7 @@ import {
 
 import api from "../services/api";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
 
@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
 
+    // Get currently logged-in user
     const getCurrentUser = async () => {
 
         try {
@@ -42,17 +43,30 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
 
-        const response = await api.post(
-            "/auth/login",
-            {
-                email,
-                password
-            }
-        );
+        setLoading(true);
 
-        setUser(response.data.data.user);
+        try {
 
-        return response.data;
+            const response = await api.post(
+                "/auth/login",
+                {
+                    email,
+                    password
+                }
+            );
+
+            const loggedInUser =
+                response.data.data.user;
+
+            setUser(loggedInUser);
+
+            return response.data;
+
+        } finally {
+
+            setLoading(false);
+
+        }
     };
 
 
@@ -109,5 +123,14 @@ export const AuthProvider = ({ children }) => {
 
 
 export const useAuth = () => {
-    return useContext(AuthContext);
+
+    const context = useContext(AuthContext);
+
+    if (!context) {
+        throw new Error(
+            "useAuth must be used inside AuthProvider"
+        );
+    }
+
+    return context;
 };

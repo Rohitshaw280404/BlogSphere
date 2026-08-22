@@ -1,22 +1,18 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
 
-    const {
-        login
-    } = useAuth();
+    const { login, loading } = useAuth();
 
     const navigate = useNavigate();
-
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
 
 
     const handleSubmit = async (e) => {
@@ -24,14 +20,10 @@ const Login = () => {
         e.preventDefault();
 
         setError("");
-        setLoading(true);
 
         try {
 
-            await login(
-                email,
-                password
-            );
+            await login(email, password);
 
             navigate("/");
 
@@ -42,24 +34,18 @@ const Login = () => {
                 "Login failed"
             );
 
-        } finally {
-
-            setLoading(false);
-
         }
     };
 
 
     return (
-        <div>
+        <main>
 
             <h1>Login</h1>
-
 
             {error && (
                 <p>{error}</p>
             )}
-
 
             <form onSubmit={handleSubmit}>
 
@@ -73,7 +59,6 @@ const Login = () => {
                     required
                 />
 
-
                 <input
                     type="password"
                     placeholder="Password"
@@ -83,7 +68,6 @@ const Login = () => {
                     }
                     required
                 />
-
 
                 <button
                     type="submit"
@@ -96,16 +80,7 @@ const Login = () => {
 
             </form>
 
-
-            <p>
-                Don't have an account?
-
-                <Link to="/register">
-                    Register
-                </Link>
-            </p>
-
-        </div>
+        </main>
     );
 };
 

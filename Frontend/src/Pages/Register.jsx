@@ -1,22 +1,22 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+    Link,
+    useNavigate
+} from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 
 const Register = () => {
 
-    const {
-        register
-    } = useAuth();
+    const { register } = useAuth();
 
     const navigate = useNavigate();
 
-
     const [formData, setFormData] = useState({
+        fullName: "",
         username: "",
         email: "",
-        password: "",
-        fullName: ""
+        password: ""
     });
 
     const [error, setError] = useState("");
@@ -29,7 +29,6 @@ const Register = () => {
             ...formData,
             [e.target.name]: e.target.value
         });
-
     };
 
 
@@ -67,15 +66,13 @@ const Register = () => {
 
 
     return (
-        <div>
+        <main>
 
             <h1>Create Account</h1>
-
 
             {error && (
                 <p>{error}</p>
             )}
-
 
             <form onSubmit={handleSubmit}>
 
@@ -126,16 +123,14 @@ const Register = () => {
 
             </form>
 
-
             <p>
-                Already have an account?
-
+                Already have an account?{" "}
                 <Link to="/login">
                     Login
                 </Link>
             </p>
 
-        </div>
+        </main>
     );
 };
 

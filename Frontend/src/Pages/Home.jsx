@@ -6,7 +6,9 @@ import PostCard from "../components/PostCard";
 const Home = () => {
 
     const [posts, setPosts] = useState([]);
+
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState("");
 
 
@@ -14,9 +16,9 @@ const Home = () => {
 
         try {
 
-            const response = await api.get(
-                "/posts"
-            );
+            const response = await api.get("/posts");
+
+            console.log("Posts response:", response.data);
 
             setPosts(
                 response.data.data.posts
@@ -24,9 +26,14 @@ const Home = () => {
 
         } catch (error) {
 
+            console.error(
+                "Error fetching posts:",
+                error
+            );
+
             setError(
                 error.response?.data?.message ||
-                "Failed to load posts"
+                "Failed to fetch posts"
             );
 
         } finally {
@@ -43,12 +50,21 @@ const Home = () => {
 
 
     if (loading) {
-        return <p>Loading posts...</p>;
+        return (
+            <main>
+                <h1>Loading posts...</h1>
+            </main>
+        );
     }
 
 
     if (error) {
-        return <p>{error}</p>;
+        return (
+            <main>
+                <h1>Something went wrong</h1>
+                <p>{error}</p>
+            </main>
+        );
     }
 
 
@@ -59,14 +75,20 @@ const Home = () => {
 
 
             {posts.length === 0 ? (
-                <p>No posts available.</p>
+
+                <p>
+                    No posts available.
+                </p>
+
             ) : (
+
                 posts.map((post) => (
                     <PostCard
                         key={post._id}
                         post={post}
                     />
                 ))
+
             )}
 
         </main>
