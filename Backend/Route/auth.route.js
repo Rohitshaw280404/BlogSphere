@@ -17,6 +17,8 @@ router.post( "/logout", verifyJWT,logoutUser);
 router.post("/refresh-token",refreshAccessToken);
 
 router.get("/me", verifyJWT, (req, res) => {
+    
+      res.set("Cache-Control", "no-store");
 
     res.status(200).json({
         success: true,

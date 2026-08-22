@@ -1,109 +1,49 @@
-import {
-    createContext,
-    useContext,
-    useEffect,
-    useState
-} from "react";
-
+import { createContext, useContext, useEffect, useState } from "react";
 import api from "../services/api";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-
-    // Get currently logged-in user
     const getCurrentUser = async () => {
-
         try {
-
             const response = await api.get("/auth/me");
 
-            setUser(response.data.data);
-
+            setUser(response.data.user);
         } catch (error) {
-
+            console.error("AUTH CHECK ERROR:", error);
             setUser(null);
-
         } finally {
-
             setLoading(false);
-
         }
     };
-
 
     useEffect(() => {
         getCurrentUser();
     }, []);
 
-
     const login = async (email, password) => {
+        const response = await api.post("/auth/login", {
+            email,
+            password,
+        });
 
-        setLoading(true);
-
-        try {
-
-            const response = await api.post(
-                "/auth/login",
-                {
-                    email,
-                    password
-                }
-            );
-
-            const loggedInUser =
-                response.data.data.user;
-
-            setUser(loggedInUser);
-
-            return response.data;
-
-        } finally {
-
-            setLoading(false);
-
-        }
-    };
-
-
-    const register = async (
-        username,
-        email,
-        password,
-        fullName
-    ) => {
-
-        const response = await api.post(
-            "/auth/register",
-            {
-                username,
-                email,
-                password,
-                fullName
-            }
-        );
+        setUser(response.data.data.user);
 
         return response.data;
     };
 
-
     const logout = async () => {
-
         try {
-
             await api.post("/auth/logout");
-
+        } catch (error) {
+            console.error("Logout error:", error);
         } finally {
-
             setUser(null);
-
         }
     };
-
 
     return (
         <AuthContext.Provider
@@ -111,9 +51,7 @@ export const AuthProvider = ({ children }) => {
                 user,
                 loading,
                 login,
-                register,
                 logout,
-                getCurrentUser
             }}
         >
             {children}
@@ -121,16 +59,6 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-
 export const useAuth = () => {
-
-    const context = useContext(AuthContext);
-
-    if (!context) {
-        throw new Error(
-            "useAuth must be used inside AuthProvider"
-        );
-    }
-
-    return context;
+    return useContext(AuthContext);
 };

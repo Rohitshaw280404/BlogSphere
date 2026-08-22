@@ -24,43 +24,78 @@ const Navbar = () => {
 
 
     return (
-        <nav>
+        <nav className="border-b bg-white">
 
-            <Link to="/">
-                Blog Platform
-            </Link>
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
+                {/* Logo */}
 
-            <div>
-
-                <Link to="/">
-                    Home
+                <Link
+                    to="/"
+                    className="text-2xl font-bold text-gray-900"
+                >
+                    Blog<span className="text-blue-600">Platform</span>
                 </Link>
 
 
-                {user ? (
-                    <>
-                        <span>
-                            Welcome, {user.fullName}
-                        </span>
+                {/* Navigation */}
 
-                        <button
-                            onClick={handleLogout}
-                        >
-                            Logout
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <Link to="/login">
-                            Login
-                        </Link>
+                <div className="flex items-center gap-6">
 
-                        <Link to="/register">
-                            Register
-                        </Link>
-                    </>
-                )}
+                    <Link
+                        to="/"
+                        className="text-gray-600 transition hover:text-blue-600"
+                    >
+                        Home
+                    </Link>
+
+
+                    {user ? (
+                        <>
+                            <Link
+                                to="/create-post"
+                                className="text-gray-600 transition hover:text-blue-600"
+                            >
+                                Create Post
+                            </Link>
+
+                            <Link
+                                to="/dashboard"
+                                className="text-gray-600 transition hover:text-blue-600"
+                            >
+                                Dashboard
+                            </Link>
+
+                            <span className="font-medium text-gray-800">
+                                {user.fullName}
+                            </span>
+
+                            <button
+                                onClick={handleLogout}
+                                className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700"
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link
+                                to="/login"
+                                className="text-gray-600 transition hover:text-blue-600"
+                            >
+                                Login
+                            </Link>
+
+                            <Link
+                                to="/register"
+                                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+                            >
+                                Register
+                            </Link>
+                        </>
+                    )}
+
+                </div>
 
             </div>
 

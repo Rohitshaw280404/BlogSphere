@@ -1,24 +1,49 @@
+import { useState } from "react";
+
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 
-const LikeButton = ({ post, setPost }) => {
+const LikeButton = ({
+    post,
+    setPost
+}) => {
 
     const { user } = useAuth();
 
+    const [loading, setLoading] = useState(false);
+
 
     const isLiked = post.likes?.some(
-        (id) =>
-            id === user?._id ||
-            id?._id === user?._id
+        (like) => {
+
+            const likeId =
+                typeof like === "string"
+                    ? like
+                    : like?._id;
+
+            return likeId === user?._id;
+        }
     );
 
 
     const handleLike = async () => {
 
         if (!user) {
-            alert("Please login to like a post");
+
+            alert(
+                "Please login to like this post."
+            );
+
             return;
         }
+
+
+        if (loading) {
+            return;
+        }
+
+
+        setLoading(true);
 
 
         try {
@@ -42,27 +67,44 @@ const LikeButton = ({ post, setPost }) => {
                 `/posts/${post._id}`
             );
 
-            setPost(response.data.data);
+
+            setPost(
+                response.data.data
+            );
+
 
         } catch (error) {
 
             alert(
                 error.response?.data?.message ||
-                "Unable to update like"
+                "Failed to update like."
             );
+
+        } finally {
+
+            setLoading(false);
+
         }
     };
 
 
     return (
-        <button onClick={handleLike}>
-
-            {isLiked ? "Unlike" : "Like"}
+        <button
+            onClick={handleLike}
+            disabled={loading}
+            className={`rounded-xl px-5 py-3 text-sm font-semibold transition ${
+                isLiked
+                    ? "bg-red-50 text-red-600 hover:bg-red-100"
+                    : "bg-gray-900 text-white hover:bg-blue-600"
+            } disabled:cursor-not-allowed disabled:opacity-60`}
+        >
+            {isLiked
+                ? "♥ Liked"
+                : "♡ Like"}
 
             {" "}
 
             ({post.likes?.length || 0})
-
         </button>
     );
 };
