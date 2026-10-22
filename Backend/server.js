@@ -14,37 +14,31 @@ connectDB();
 
 const app = express();
 
-
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(
-    cors({
-        origin: "http://localhost:5173",
-        credentials: true
-    })
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
 );
 // Routes
 app.get("/", (req, res) => {
-    res.send("API Running...");
+  res.send("API Running...");
 });
 
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/comments", commentRouter);
 
-
 // Error middleware
 app.use(errorHandler);
-
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
-
-
-

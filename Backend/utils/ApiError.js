@@ -1,7 +1,7 @@
 export const ApiError = (statusCode, message) => {
-    const error = new Error(message);
+  const error = new Error(message);
 
-    error.statusCode = statusCode;
+  error.statusCode = statusCode;
 
-    return error;
+  return error;
 };
